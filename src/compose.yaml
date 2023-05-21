@@ -1,4 +1,8 @@
-version: '3'
+version: '3.8'
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
 
 networks:
   front-tier:
@@ -7,17 +11,29 @@ networks:
 services:
   prometheus:
     image: prom/prometheus:latest
+    container_name: prometheus
+    hostname: prometheus
     volumes:
       - ./prometheus/config:/etc/prometheus
-      #- ./prometheus/data:/prometheus
+      - prometheus_data:/prometheus
+    expose:
+      - 9090
     ports:
-      - "9999:9090"
+      - 9090:9090
+    networks:
+      - back-tier
+    restart: always
   grafana:
     image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
     volumes:
       - ./grafana/config:/etc/grafana
-      #- ./grafana/data:/var/lib/grafana      
+      - grafana_data:/var/lib/grafana      
     ports:
-      - "3333:3000"
+      - 3000:3000
     depends_on:
       - prometheus
+    networks:
+      - back-tier
+      - front-tier
