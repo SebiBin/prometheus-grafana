@@ -31,6 +31,16 @@ scrape_configs:
     static_configs:
         - targets: ['localhost:9090']
          #- targets: ['localhost:9090','cadvisor:8080','node-exporter:9100']
+  - job_name: 'forecast'
+    scrape_interval: 10s
+    scrape_timeout: 10s
+    static_configs:
+      - targets:
+          - "localhost:7255"
+    scheme: https
+    metrics_path: /health/metrics
+    tls_config:
+      insecure_skip_verify: true
 
 #remote_write:
 #  - url: '<Your Prometheus remote_write endpoint>'
